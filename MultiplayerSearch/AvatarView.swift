@@ -99,5 +99,24 @@ class AvatarView: UIView {
                     self.bounceOffPoint(bouncePoint, morphSize: morphSize)
                 }
         })
+        
+//        print("origiinalcenter: \(originalCenter)\nbouncePoint\(bouncePoint)")
+        let morphedFrame = (originalCenter.x > bouncePoint.x) ?
+            
+            CGRect(x: 0.0, y: bounds.height - morphSize.height,
+                width: morphSize.width, height: morphSize.height) :
+            
+            CGRect(x: bounds.width - morphSize.width, y: bounds.height - morphSize.height,
+                width: morphSize.width, height: morphSize.height)
+
+        let morphAnimation = CABasicAnimation(keyPath: "path")
+        morphAnimation.duration = animationDuration
+        morphAnimation.toValue = UIBezierPath(
+            ovalInRect: morphedFrame).CGPath
+        morphAnimation.timingFunction = CAMediaTimingFunction(
+            name: kCAMediaTimingFunctionEaseOut)
+        
+        circleLayer.addAnimation(morphAnimation, forKey: nil)
+        maskLayer.addAnimation(morphAnimation, forKey: nil)
     }
 }
