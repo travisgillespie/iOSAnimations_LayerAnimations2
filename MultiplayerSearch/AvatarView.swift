@@ -44,6 +44,7 @@ class AvatarView: UIView {
     }
     
     var shouldTransitionToFinishedState = false
+    var isSauare = false
     
     override func didMoveToWindow() {
         layer.addSublayer(photoLayer)
@@ -85,6 +86,9 @@ class AvatarView: UIView {
                 self.center = bouncePoint
             }, completion: {_ in
                 //complete bounce to
+                if self.shouldTransitionToFinishedState {
+                    self.animateToSquare()
+                }
         })
         
         UIView.animateWithDuration(animationDuration, delay: animationDuration,
@@ -96,7 +100,9 @@ class AvatarView: UIView {
             },
             completion: {_ in
                 delay(seconds: 0.1) {
-                    self.bounceOffPoint(bouncePoint, morphSize: morphSize)
+                    if !self.isSauare {
+                        self.bounceOffPoint(bouncePoint, morphSize: morphSize)
+                    }
                 }
         })
         
@@ -118,5 +124,21 @@ class AvatarView: UIView {
         
         circleLayer.addAnimation(morphAnimation, forKey: nil)
         maskLayer.addAnimation(morphAnimation, forKey: nil)
+    }
+    
+    func animateToSquare() {
+        isSauare = true
+        
+        let squarePath = UIBezierPath(rect: bounds).CGPath
+        let morph = CABasicAnimation(keyPath: "path")
+        morph.duration = 0.25
+        morph.fromValue = circleLayer.path
+        morph.toValue = squarePath
+        
+        circleLayer.addAnimation(morph, forKey: nil)
+        maskLayer.addAnimation(morph, forKey: nil)
+        
+        circleLayer.path = squarePath
+        maskLayer.path = squarePath
     }
 }
